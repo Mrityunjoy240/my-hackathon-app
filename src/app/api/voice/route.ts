@@ -81,7 +81,11 @@ export async function POST(req: NextRequest) {
     // Cache check
     const cacheKey = `${text.substring(0, 100)}_${language}`;
     if (ttsCache.has(cacheKey)) {
-      return new Response(ttsCache.get(cacheKey), {
+      const cachedAudio = ttsCache.get(cacheKey);
+      if (!cachedAudio) {
+        return new Response('Audio not found', { status: 404 });
+      }
+      return new Response(cachedAudio, {
         headers: { 'Content-Type': 'audio/wav' },
       });
     }
