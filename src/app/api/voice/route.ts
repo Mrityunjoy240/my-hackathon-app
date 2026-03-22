@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // In-memory cache for common TTS responses
-const ttsCache = new Map<string, Buffer>();
+const ttsCache = new Map<string, Uint8Array>();
 const MAX_CACHE_SIZE = 50;
 
 function cleanForVoice(text: string): string {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
       if (!cachedAudio) {
         return new Response('Audio not found', { status: 404 });
       }
-      return new Response(cachedAudio, {
+      return new Response(cachedAudio.buffer, {
         headers: { 'Content-Type': 'audio/wav' },
       });
     }
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
       const firstKey = ttsCache.keys().next().value;
       if (firstKey) ttsCache.delete(firstKey);
     }
-    ttsCache.set(cacheKey, audioBuffer);
+    ttsCache.set(cacheKey, new Uint8Array(audioBuffer));
 
     return new Response(audioBuffer, {
       headers: {
