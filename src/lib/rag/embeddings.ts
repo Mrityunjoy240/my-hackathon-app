@@ -1,31 +1,47 @@
-import { HfInference } from "@huggingface/inference";
+import { pipeline } from '@xenova/transformers';
 
-const hf = new HfInference(process.env.HUGGINGFACE_API_KEY || "");
+let embedder: any = null;
 
-export async function generateEmbedding(text: string): Promise<number[]> {
+async function getEmbedder() {
+  if (!embedder) {
+    embedder = await pipeline(
+      'feature-extraction',
+      'Xenova/all-MiniLM-L6-v2'
+    );
+  }
+  return embedder;
+}
+
+export async function generateEmbedding(
+  text: string
+): Promise<number[]> {
   try {
-    const result = await hf.featureExtraction({
-      model: "sentence-transformers/all-MiniLM-L6-v2",
-      inputs: text,
+    const embed = await getEmbedder();
+    const result = await embed(text, { 
+      pooling: 'mean', 
+      normalize: true 
     });
-    return Array.from(result as number[]);
+    return Array.from(result.data) as number[];
   } catch (error) {
-    console.error("Embedding generation failed:", error);
-    throw new Error("Failed to generate embedding.");
+    console.error('Embedding failed:', error);
+    throw new Error('Failed to generate embedding.');
   }
 }
 
-export async function generateBatchEmbeddings(texts: string[]): Promise<number[][]> {
+export async function generateBatchEmbeddings(
+  texts: string[]
+): Promise<number[][]> {
   try {
+    const embed = await getEmbedder();
     const results = await Promise.all(
-      texts.map(text => hf.featureExtraction({
-        model: "sentence-transformers/all-MiniLM-L6-v2",
-        inputs: text,
+      texts.map(text => embed(text, { 
+        pooling: 'mean', 
+        normalize: true 
       }))
     );
-    return results.map(r => Array.from(r as number[]));
+    return results.map(r => Array.from(r.data) as number[]);
   } catch (error) {
-    console.error("Batch embedding generation failed:", error);
-    throw new Error("Failed to generate batch embeddings.");
+    console.error('Batch embedding failed:', error);
+    throw new Error('Failed to generate batch embeddings.');
   }
 }
