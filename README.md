@@ -1,5 +1,62 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Configuration
+
+Create a `.env.local` file in the root directory and add your keys:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### Supabase Setup
+
+Run the following SQL in your Supabase SQL Editor to enable vector support and create the necessary tables/functions:
+
+```sql
+-- Enable the pgvector extension to work with embeddings
+create extension vector;
+
+-- Create a table to store your documents
+create table documents (
+  id bigserial primary key,
+  content text,
+  metadata jsonb,
+  embedding vector(768) -- 768 is the dimension for Gemini text-embedding-004
+);
+
+-- Create a function to search for documents
+create or replace function match_documents (
+  query_embedding vector(768),
+  match_threshold float,
+  match_count int
+)
+returns table (
+  id bigint,
+  content text,
+  metadata jsonb,
+  similarity float
+)
+language plpgsql
+as $$
+begin
+  return query
+  select
+    documents.id,
+    documents.content,
+    documents.metadata,
+    1 - (documents.embedding <=> query_embedding) as similarity
+  from documents
+  where 1 - (documents.embedding <=> query_embedding) > match_threshold
+  order by similarity desc
+  limit match_count;
+end;
+$$;
+```
+
+Get your key at: [Google AI Studio](https://aistudio.google.com/)
+
 ## Getting Started
 
 First, run the development server:

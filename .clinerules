@@ -1,0 +1,54 @@
+# Project Context
+This is a Next.js 16 RAG-based AI College Assistant where college 
+authorities upload documents and students ask questions and get 
+answers in their preferred language with Indian voice output.
+
+# Who Uses What
+- Authorities → upload documents (notices, syllabus, timetables, results)
+- Students → ask questions via text or voice, get answers in their language
+
+# Stack
+- Frontend: Next.js 16 App Router with i18n (/en, /hi, /bn routing)
+- Database: Supabase with pgvector (documents table, vector(768))
+- AI: Google Gemini API (gemini-1.5-flash for chat, text-embedding-004 for embeddings)
+- Voice: Web Speech API or Google TTS with Indian accent
+- Embedding dimensions: 768
+
+# Language Rules
+- App supports English, Hindi, Bengali
+- AI must detect the language of the student's question
+- AI must always reply in the same language the student used
+- Voice output must use Indian English accent or native language voice
+- Never respond in a language the student did not use
+
+# Coding Rules
+- Use functional React components with hooks only
+- All API routes go in: src/app/api/
+- All database queries go in: src/lib/rag/
+- Always handle errors in try/catch blocks
+- Always show loading states when fetching data
+- Never modify files outside of the task scope
+- Use TypeScript everywhere, no any types
+
+# Project Folder Structure
+- src/app/api/chat/route.ts → RAG chat endpoint
+- src/app/api/vector/ingest/route.ts → document ingestion endpoint
+- src/app/api/upload/route.ts → file upload handler (to be built)
+- src/app/api/voice/route.ts → voice/TTS handler (to be built)
+- src/lib/rag/embeddings.ts → Gemini embedding functions
+- src/lib/rag/supabase.ts → Supabase vector search client
+
+# Commands
+- Install packages: npm install [package]
+- Run dev server: npm run dev
+- Dev server runs on: http://localhost:3000
+
+# Do NOT
+- Never use inline styles
+- Never use var (use const or let only)
+- Never commit .env files
+- Never change files not mentioned in the task
+- Never add authentication for students
+- Never use non-Indian accents for voice
+- Never respond in a language the student did not use
+- Never install new packages without asking first

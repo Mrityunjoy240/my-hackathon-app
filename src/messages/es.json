@@ -1,0 +1,10 @@
+{
+  "Index": {
+    "title": "Asistente Universitario de IA",
+    "welcome": "Bienvenido a tu asistente universitario impulsado por IA."
+  },
+  "Chat": {
+    "placeholder": "Pregunta cualquier cosa sobre la universidad...",
+    "thinking": "Pensando..."
+  }
+}

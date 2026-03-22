@@ -1,0 +1,10 @@
+{
+  "Index": {
+    "title": "AI College Assistant",
+    "welcome": "Welcome to your AI-powered college assistant."
+  },
+  "Chat": {
+    "placeholder": "Ask anything about college...",
+    "thinking": "Thinking..."
+  }
+}
