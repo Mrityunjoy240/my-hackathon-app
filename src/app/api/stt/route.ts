@@ -56,6 +56,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'ASSEMBLYAI_API_KEY not configured' }, { status: 500 });
     }
 
+    console.log("ASSEMBLYAI_KEY_CHECK: " + (process.env.ASSEMBLYAI_API_KEY ? "present, length=" + process.env.ASSEMBLYAI_API_KEY.length : "MISSING"));
+
     const client = new AssemblyAI({
       apiKey: process.env.ASSEMBLYAI_API_KEY
     });
